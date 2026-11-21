@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tidepool · Daily</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20261120resize" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#daily">TIDEPOOL<span class="logo-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span></a>
+    <p class="workspace" id="workspace">Seastar Endocrinology's Workspace</p>
+    <div class="account-wrap">
+      <button class="account" id="account" aria-expanded="false" aria-haspopup="menu">
+        <span id="account-name">Dr. Sally Seastar</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <div class="account-menu" id="account-menu" role="menu" hidden>
+        <button type="button" role="menuitem">Account</button>
+        <button type="button" role="menuitem">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="frame">
+    <section class="patient" aria-label="Patient">
+      <div class="patient-id">
+        <button class="back" id="back" type="button">
+          <svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 4 6 9l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Back
+        </button>
+        <div class="who">
+          <span class="avatar" id="avatar">JJ</span>
+          <span id="who-name">Jonathan Jellyfish</span>
+        </div>
+        <span class="meta" id="dob">DOB : <b>1982-08-24</b></span>
+        <span class="meta" id="mrn">MRN : <b>1112222</b></span>
+      </div>
+      <div class="patient-actions">
+        <button class="linkish strong" type="button"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M1.5 9S4.2 4.5 9 4.5 16.5 9 16.5 9 13.8 13.5 9 13.5 1.5 9 1.5 9Z" fill="none" stroke="currentColor"/><circle cx="9" cy="9" r="2" fill="none" stroke="currentColor"/></svg> View Data</button>
+        <button class="linkish" id="profile" type="button">Patient Profile</button>
+        <button class="linkish" id="share" type="button" hidden>Share Data</button>
+        <button class="linkish" type="button">Upload Data</button>
+        <button class="linkish" id="settings" type="button" hidden>Settings</button>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="tabs" role="tablist" aria-label="Views">
+        <button class="tab" type="button" role="tab" data-tab="basics">Basics</button>
+        <button class="tab" type="button" role="tab" data-tab="trends">Trends</button>
+        <button class="tab" type="button" role="tab" data-tab="daily" aria-selected="true">Daily</button>
+        <button class="tab" type="button" role="tab" data-tab="daily-mobile">Daily mobile</button>
+        <button class="tab" type="button" role="tab" data-tab="week">Nov 12–17</button>
+        <button class="tab" type="button" role="tab" data-tab="cycle">Cycle Insights <span class="badge">NEW</span></button>
+        <button class="tab" type="button" role="tab" data-tab="cycle-insights-2">Cycle Insights 2</button>
+        <button class="tab" type="button" role="tab" data-tab="daily-cycle">Daily + cycle</button>
+        <button class="tab" type="button" role="tab" data-tab="bg">BG Log</button>
+        <button class="tab" type="button" role="tab" data-tab="devices">Devices</button>
+        <span class="tabs-spacer"></span>
+        <button class="print" id="print" type="button">
+          <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 6.5V3h8v3.5M5 12.5H3.5v-5h11v5H13" fill="none" stroke="currentColor"/><rect x="5" y="10.5" width="8" height="5" fill="none" stroke="currentColor"/></svg>
+          Print
+        </button>
+      </div>
+
+      <div class="view" data-view="daily">
+        <div id="daily-stage">
+        <div class="daily-layout">
+          <div class="daily-main">
+            <article class="chart-card">
+              <div class="layer-select" role="group" aria-label="Choose what to show">
+                <span class="layer-label">Show</span>
+                <button class="pill" type="button" data-layer="cycle" aria-pressed="true">Menstrual cycle</button>
+                <button class="pill" type="button" data-layer="sleep" aria-pressed="true">Sleep data</button>
+                <button class="pill" type="button" data-layer="therapy" aria-pressed="true">Therapy settings</button>
+                <button class="pill" type="button" data-layer="exercise" aria-pressed="true">Exercise</button>
+                <button class="pill" type="button" data-layer="tags" aria-pressed="true">Oura tags</button>
+              </div>
+              <div class="cycle-month">
+                <div class="cycle-month-head">
+                  <h2>November 2026</h2>
+                  <p id="cycle-today-note">Today is day 2 of your period.</p>
+                </div>
+                <div class="cycle-circles" id="cycle-circles" role="group" aria-label="November days"></div>
+                <div class="phase-legend">
+                  <span class="stat-bit"><i class="swatch menstrual"></i>Menstrual</span>
+                  <span class="stat-bit"><i class="swatch follicular"></i>Follicular</span>
+                  <span class="stat-bit"><i class="swatch fertile"></i>Fertile</span>
+                  <span class="stat-bit"><i class="swatch luteal"></i>Luteal</span>
+                </div>
+              </div>
+              <div class="therapy-strip" id="therapy-strip" hidden></div>
+              <div class="chart-head">
+                <div class="day-nav">
+                  <button class="icon-btn" id="prev-day" type="button" aria-label="Previous day">
+                    <svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 4 6 9l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </button>
+                  <div>
+                    <h2 id="glucose-when">Saturday, Nov 14</h2>
+                    <span class="quiet" id="day-label">Sat, Nov 14, 2026</span>
+                  </div>
+                  <button class="icon-btn" id="next-day" type="button" aria-label="Next day">
+                    <svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M7 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </button>
+                </div>
+                <button class="pill" id="oura-connect" type="button">Connect Oura</button>
+                <button class="pill" id="refresh" type="button">
+                  <span class="refresh-label">Refresh</span>
+                  <svg class="refresh-trim" aria-hidden="true">
+                    <rect pathLength="100" fill="none"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="chart-scroll">
+              <div class="chart-stage">
+                <div id="daily-chart"></div>
+                <div class="chart-shade" id="chart-shade-start" hidden></div>
+                <div class="chart-shade" id="chart-shade-end" hidden></div>
+                <button class="chart-handle" id="chart-handle-start" type="button" data-edge="start" role="slider" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0" aria-label="Left handle. Drag right to show a smaller time window."></button>
+                <button class="chart-handle" id="chart-handle-end" type="button" data-edge="end" role="slider" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="24" aria-valuenow="24" aria-label="Right handle. Drag left to show a smaller time window."></button>
+                <div class="chart-window" id="chart-window" hidden>
+                  <span id="chart-window-label"></span>
+                  <button type="button" id="chart-window-reset">Full day</button>
+                </div>
+                <button class="hotspot" id="sleep-hot" type="button" aria-expanded="false" aria-label="Sleep, 11:03 pm to 8:51 am"></button>
+                <button class="hotspot" id="run-hot" type="button" aria-expanded="false" aria-label="Running, 11:34 am to 12:10 pm"></button>
+                <div class="bolus-tip record-tip" id="bolus-tip" hidden>
+                  <div class="record-tip-card">
+                    <p class="record-tip-time"></p>
+                    <dl class="record-tip-rows"></dl>
+                    <p class="record-tip-copy"></p>
+                    <div class="record-tip-entry"></div>
+                    <p class="record-tip-note">Recorded. Not a medication recommendation.</p>
+                  </div>
+                </div>
+                <div class="insight-tip record-tip" id="insight-tip" hidden>
+                  <div class="record-tip-card">
+                    <p class="record-tip-time"></p>
+                    <dl class="record-tip-rows"></dl>
+                    <p class="record-tip-copy"></p>
+                    <div class="record-tip-entry"></div>
+                    <p class="record-tip-note">Recorded. Not a medication recommendation.</p>
+                  </div>
+                </div>
+                <div class="popover record-tip" id="sleep-pop" hidden>
+                  <div class="record-tip-card">
+                    <p class="record-tip-time">11:03 pm – 8:51 am</p>
+                    <dl class="record-tip-rows">
+                      <div><dt>Sleep</dt><dd>Duration 9h 48m</dd></div>
+                      <div><dt>Sleep score</dt><dd>68 – Fair</dd></div>
+                      <div><dt>Source</dt><dd>Oura Ring 3</dd></div>
+                    </dl>
+                    <p class="record-tip-copy"></p>
+                    <div class="record-tip-entry"></div>
+                    <p class="record-tip-note">Recorded. Not a medication recommendation.</p>
+                  </div>
+                </div>
+                <div class="chart-legend health-legend" aria-hidden="true">
+                  <span><i class="intensity"></i>Confirmed</span>
+                  <span><i class="swatch partial"></i>Partial overlap</span>
+                  <span><i class="swatch sched"></i>Unconfirmed</span>
+                  <span><i class="swatch sleep"></i>sleep powered by Oura</span>
+                  <span><i class="swatch hr"></i>heart rate</span>
+                  <span><i class="oura-tag"></i>tags from Oura Ring</span>
+                </div>
+                <div class="chart-legend glucose-legend" id="glucose-legend" hidden>
+                  <span><i class="dot low"></i>low &lt;70</span>
+                  <span><i class="dot in-range"></i>70–180</span>
+                  <span><i class="dot high"></i>high 180–250</span>
+                  <span><i class="dot very-high"></i>&gt;250</span>
+                </div>
+              </div>
+              </div>
+              <div class="lane-legend">
+                <span><i class="swatch" style="background:#f8e7b0;border:1px solid #e0b84a"></i>undelivered</span>
+                <span><i class="swatch" style="background:#d7ecfb;border:1px solid #7eb0dd"></i>delivered</span>
+                <span><i class="swatch sched"></i>scheduled</span>
+                <span><i class="swatch" style="background:#7eb6e8"></i>automated</span>
+              </div>
+              <p class="status" id="status" role="status"></p>
+            </article>
+
+            <article class="card insight-card" id="run-card">
+              <div class="card-title">
+                <h2>11:34 am – 12:10 pm</h2>
+                <span>Wearable · Oura Ring</span>
+              </div>
+              <dl class="fact-list">
+                <div><dt>Preset</dt><dd>Running</dd></div>
+                <div><dt>Overall insulin needs</dt><dd>80%</dd></div>
+                <div><dt>Correction range</dt><dd>140–160 mg/dL</dd></div>
+              </dl>
+              <p class="fine">Insulin needs here describes the recorded preset. It changes how carb ratio, sensitivity, and basal were set for this window. It is not a recommendation to change a dose.</p>
+              <div class="fact-head">
+                <h3>Activity data</h3>
+                <span class="chip">Wearable · Oura Ring</span>
+              </div>
+              <dl class="fact-list">
+                <div><dt>Avg. heart rate</dt><dd>202 bpm</dd></div>
+                <div><dt>Starting glucose</dt><dd>120 mg/dL</dd></div>
+                <div><dt>Ending glucose</dt><dd>230 mg/dL</dd></div>
+              </dl>
+              <div class="banner purple">
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.2a4.6 4.6 0 0 0-2.6 8.4c.4.3.6.7.6 1.1v.5h4v-.5c0-.4.2-.8.6-1.1A4.6 4.6 0 0 0 10 3.2Z" fill="none" stroke="#445f87"/><path d="M8.2 15h3.6M8.6 16.6h2.8" stroke="#445f87" stroke-linecap="round"/></svg>
+                <div>
+                  <p style="margin:0">Average heart rate was 22% higher than usual for this activity and may be the cause of the glucose spike. <button class="text-btn" id="learn-more" type="button" aria-expanded="false">Tap to learn more.</button></p>
+                  <p class="more" id="learn-panel" hidden>The 11:34 am run is the recorded activity on this day. Heart rate, start glucose, and end glucose come from the devices above. This view describes that day. It is not a medication recommendation.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="card therapy-settings" id="therapy-settings">
+              <div class="card-title">
+                <h2>Therapy settings</h2>
+                <span>Tandem t:slim X2 · recorded</span>
+              </div>
+              <p class="fine">Active for this day. These are the recorded pump settings. They are not a recommendation to change a dose.</p>
+              <div class="settings-grid">
+                <section class="settings-table">
+                  <h3>Basal rates <span>U/hr</span></h3>
+                  <table>
+                    <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                    <tbody>
+                      <tr><td>12:00 am</td><td>1</td></tr>
+                      <tr><td>2:00 am</td><td>1.05</td></tr>
+                      <tr><td>4:00 am</td><td>1.1</td></tr>
+                      <tr><td>6:30 am</td><td>1.3</td></tr>
+                      <tr><td>9:30 am</td><td>1.1</td></tr>
+                      <tr><td>1:30 pm</td><td>1</td></tr>
+                    </tbody>
+                    <tfoot><tr><td>Total</td><td>25.65</td></tr></tfoot>
+                  </table>
+                </section>
+                <section class="settings-table">
+                  <h3>Correction range <span>mg/dL</span></h3>
+                  <table>
+                    <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                    <tbody>
+                      <tr><td>12:00 am</td><td>105–115</td></tr>
+                    </tbody>
+                  </table>
+                </section>
+                <section class="settings-table">
+                  <h3>Carb ratios <span>g/U</span></h3>
+                  <table>
+                    <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                    <tbody>
+                      <tr><td>12:00 am</td><td>8.5</td></tr>
+                      <tr><td>5:00 am</td><td>7.5</td></tr>
+                      <tr><td>9:30 am</td><td>7.8</td></tr>
+                      <tr><td>11:00 am</td><td>8.5</td></tr>
+                      <tr><td>6:00 pm</td><td>8</td></tr>
+                    </tbody>
+                  </table>
+                </section>
+                <section class="settings-table">
+                  <h3>Insulin sensitivities <span>mg/dL/U</span></h3>
+                  <table>
+                    <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                    <tbody>
+                      <tr><td>12:00 am</td><td>35</td></tr>
+                      <tr><td>1:30 am</td><td>37</td></tr>
+                      <tr><td>9:30 pm</td><td>35</td></tr>
+                    </tbody>
+                  </table>
+                </section>
+              </div>
+              <dl class="settings-limits">
+                <div><dt>Glucose safety limit</dt><dd>80 mg/dL</dd></div>
+                <div><dt>Maximum basal rate</dt><dd>3 U/hr</dd></div>
+                <div><dt>Maximum bolus</dt><dd>10 U</dd></div>
+                <div><dt>Insulin model</dt><dd>Rapid-Acting – Adults</dd></div>
+              </dl>
+            </article>
+          </div>
+
+          <aside class="stat-rail" aria-label="Day statistics">
+            <div class="rail-tools">
+              <div class="pills" role="group" aria-label="Glucose source">
+                <button class="pill" type="button" data-source="bgm" aria-pressed="false">BGM</button>
+                <button class="pill" type="button" data-source="cgm" aria-pressed="true">CGM</button>
+              </div>
+              <button class="icon-btn" id="close-rail" type="button" aria-label="Close statistics">
+                <svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 5l8 8M13 5l-8 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+
+            <details class="stat-card" open>
+              <summary><span id="device-count">Devices (3)</span></summary>
+              <div class="device-list">
+                <label class="device-row"><input type="checkbox" data-device="dexcom" checked /> Dexcom G7 <span class="device-kind">CGM</span></label>
+                <label class="device-row"><input type="checkbox" data-device="tandem" checked /> Tandem t:slim X2 <span class="device-kind">Pump</span></label>
+                <label class="device-row"><input type="checkbox" data-device="oura" checked /> Oura Ring 3 <span class="device-kind">Wearable</span></label>
+              </div>
+            </details>
+
+            <article class="stat-card oura-tags-card" id="oura-tags-card">
+              <div class="stat-top">
+                <h3>Tags from Oura Ring</h3>
+                <span class="quiet" id="oura-tags-count"></span>
+              </div>
+              <div class="oura-tag-groups" id="oura-tags"></div>
+              <p class="fine">Logged on this day. Shown with the glucose record. This is not a medication recommendation.</p>
+            </article>
+
+            <article class="stat-card oura-vitals" id="oura-vitals" hidden>
+              <div class="stat-top"><h3>Oura Ring</h3><span class="quiet">This day</span></div>
+              <div class="oura-pair">
+                <div>
+                  <p class="quiet">Resting heart rate</p>
+                  <div class="stat-value navy" id="resting-hr">—</div>
+                </div>
+                <div>
+                  <p class="quiet">Heart rate variability</p>
+                  <div class="stat-value navy" id="sleep-hrv">—</div>
+                </div>
+              </div>
+              <div>
+                <p class="quiet">Readiness</p>
+                <div class="stat-value navy" id="readiness-score">—</div>
+              </div>
+              <div>
+                <p class="quiet">Sleep stages</p>
+                <div id="sleep-stages">—</div>
+              </div>
+              <div class="oura-pair">
+                <div>
+                  <p class="quiet">Steps</p>
+                  <div class="stat-value navy" id="oura-steps">—</div>
+                </div>
+                <div>
+                  <p class="quiet">Active time</p>
+                  <div class="stat-value navy" id="oura-active">—</div>
+                </div>
+              </div>
+              <div>
+                <p class="quiet">Daytime stress</p>
+                <div id="stress-summary">—</div>
+              </div>
+              <p class="fine">Recorded by Oura Ring. Resting heart rate is the lowest heart rate during sleep. Heart-rate variability is the average during that sleep. Active time is medium and high activity. This is not a diagnosis or a medication recommendation.</p>
+            </article>
+
+            <article class="stat-card" data-panel="tir">
+              <div id="tir-rows"></div>
+              <div class="tir-legend" id="tir-legend"></div>
+              <p class="note" id="cgm-only" hidden>Time in range, standard deviation, and CV are calculated from CGM. Switch back to CGM to chart the trace.</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-top">
+                <h3 id="avg-label">Avg. Glucose (CGM)</h3>
+                <span class="unit">mg/dL</span>
+              </div>
+              <div class="stat-figure">
+                <svg class="spark" width="160" height="16" viewBox="0 0 160 16" aria-hidden="true"><polyline points="0,11 22,9 44,8 66,10 88,7 110,8 132,6 154,5" fill="none" stroke="#08a057" stroke-width="1.6"/><circle cx="154" cy="5" r="3" fill="#08a057"/></svg>
+                <div class="stat-value" id="avg-glucose">128</div>
+              </div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-top">
+                <h3>Total insulin <span class="quiet" id="insulin-total">(30.2 U)</span></h3>
+              </div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill basal" id="basal-bar"></span><em id="basal-chip">14.1U</em></div>
+                <span id="basal-read">46%</span>
+              </div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill bolus" id="bolus-bar"></span><em id="bolus-chip">16.1U</em></div>
+                <span id="bolus-read">54%</span>
+              </div>
+              <div class="keyline"><span><i class="swatch" style="background:#7eb6e8"></i>Basal</span><span><i class="swatch" style="background:#3d8fd4"></i>Bolus</span></div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-top"><h3>Time in automation</h3></div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill manual" id="manual-bar"></span><em id="manual-chip">35m</em></div>
+                <span id="manual-read">2%</span>
+              </div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill auto" id="auto-bar"></span><em id="auto-chip">23h 25m</em></div>
+                <span id="auto-read">98%</span>
+              </div>
+              <div class="keyline"><span>Manual</span><span>Automation</span></div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-top"><h3>Scheduled preset</h3></div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill workout" id="workout-bar"></span><em id="workout-chip">0m</em></div>
+                <span id="workout-read">0%</span>
+              </div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill premeal" id="premeal-bar"></span><em id="premeal-chip">2h</em></div>
+                <span id="premeal-read">8%</span>
+              </div>
+              <div class="keyline"><span>Workout</span><span>Premeal</span></div>
+            </article>
+
+            <article class="stat-card stat-inline">
+              <h3>Total carbs</h3>
+              <div class="stat-value blue" id="carbs-value">147 <small>g</small></div>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-top">
+                <h3>Std. deviation (CGM) <span class="quiet" id="sd-range">(99 – 215)</span></h3>
+                <span class="unit">mg/dL</span>
+              </div>
+              <div class="stat-figure">
+                <span class="range-spark" aria-hidden="true"></span>
+                <div class="stat-value navy" id="sd-value">38</div>
+              </div>
+            </article>
+
+            <article class="stat-card stat-inline">
+              <h3 id="cv-label">CV (CGM)</h3>
+              <div class="stat-value green" id="cv-value">30 <small>%</small></div>
+            </article>
+          </aside>
+          <button class="rail-reopen" id="show-stats" type="button" hidden>
+            <svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 4 6 9l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Open statistics
+          </button>
+        </div>
+        </div>
+      </div>
+
+      <div class="view" data-view="daily-mobile" hidden>
+        <p class="fine phone-caption">Daily at a phone width. Slide the chart sideways. This is the same recorded day as the desktop view.</p>
+        <div class="phone-frame">
+          <div class="phone-status" aria-hidden="true"><span>9:41</span><span>Daily</span></div>
+          <div class="phone-screen" id="phone-screen"></div>
+        </div>
+      </div>
+
+      <div class="view" data-view="week" hidden>
+        <div class="week-head">
+          <h2>Nov 12–17</h2>
+          <p class="quiet" id="week-range"></p>
+          <p class="chart-window week-window" id="week-window" hidden>
+            <span id="week-window-label"></span>
+            <button type="button" id="week-window-reset">Full day</button>
+          </p>
+        </div>
+        <div class="chart-legend" aria-hidden="true">
+          <span><i class="intensity"></i>Confirmed</span>
+          <span><i class="swatch partial"></i>Partial overlap</span>
+          <span><i class="swatch sched"></i>Unconfirmed</span>
+          <span><i class="swatch sleep"></i>sleep powered by Oura</span>
+          <span><i class="oura-tag"></i>tags from Oura Ring</span>
+        </div>
+        <div class="week-stack" id="week-stack"></div>
+      </div>
+
+      <div class="view" data-view="daily-cycle" hidden>
+        <div class="daily-layout">
+          <div class="daily-main">
+            <article class="chart-card" id="cx-chart-card">
+              <div class="chart-head">
+                <div class="day-nav">
+                  <button class="icon-btn" id="cx-prev" type="button" aria-label="Previous cycle day">
+                    <svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 4 6 9l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </button>
+                  <div>
+                    <h2 id="cx-when">Saturday, Jan 3</h2>
+                    <span class="quiet" id="cx-label">Sat, Jan 3, 2026</span>
+                  </div>
+                  <button class="icon-btn" id="cx-next" type="button" aria-label="Next cycle day">
+                    <svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M7 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </button>
+                </div>
+                <span class="phase-chip" id="cx-chip">Cycle day 15 · Luteal</span>
+              </div>
+              <div class="ruler-wrap">
+                <div class="phase-ruler" aria-hidden="true">
+                  <span class="fol">Follicular</span>
+                  <span class="lut">Luteal</span>
+                  <i class="period-band" title="Period"></i>
+                  <i class="phase-mark" id="cx-mark"></i>
+                </div>
+                <p class="ruler-key"><span>Period, days 1–3</span><span id="cx-ruler-note">Today is cycle day 15</span></p>
+              </div>
+              <div class="chart-stage">
+                <div id="cx-chart"></div>
+              </div>
+              <div class="lane-legend">
+                <span><i class="swatch sleep"></i>Sleep · Oura Ring</span>
+                <span><i class="intensity"></i>Exercise · Oura Ring</span>
+                <span><i class="swatch" style="background:#3aaa6a"></i>Glucose</span>
+                <span><i class="swatch" style="background:#fff;border:1px solid #708FC2"></i>Bolus</span>
+                <span><i class="swatch" style="background:#FFE8CF;border:1px solid #708FC2"></i>Carb meal</span>
+                <span><i class="swatch" style="background:#3d8fd4"></i>Basal</span>
+              </div>
+            </article>
+
+            <article class="card insight-card" id="cx-insight">
+              <div class="card-title">
+                <h2 id="cx-insight-title">Luteal phase</h2>
+                <span id="cx-insight-sub">Cycle day 15 of 29</span>
+              </div>
+              <div class="banner purple" id="cx-banner">
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.2a4.6 4.6 0 0 0-2.6 8.4c.4.3.6.7.6 1.1v.5h4v-.5c0-.4.2-.8.6-1.1A4.6 4.6 0 0 0 10 3.2Z" fill="none" stroke="#445f87"/><path d="M8.2 15h3.6M8.6 16.6h2.8" stroke="#445f87" stroke-linecap="round"/></svg>
+                <p id="cx-insight-copy" style="margin:0"></p>
+              </div>
+            </article>
+          </div>
+
+          <aside class="stat-rail" aria-label="Cycle day statistics">
+            <article class="stat-card oura-vitals" id="cx-oura">
+              <h3>Oura Ring</h3>
+              <p class="quiet">Recorded sample for this cycle day.</p>
+              <div class="oura-pair">
+                <div>
+                  <p class="quiet">Sleep</p>
+                  <div class="stat-value navy" id="cx-sleep">—</div>
+                </div>
+                <div>
+                  <p class="quiet">Exercise</p>
+                  <div class="stat-value navy" id="cx-exercise">—</div>
+                </div>
+              </div>
+              <div>
+                <p class="quiet">Daytime stress</p>
+                <div id="cx-stress">—</div>
+              </div>
+              <p class="fine">Sleep, exercise, and daytime stress describe this cycle day. They are not a diagnosis or a medication recommendation.</p>
+            </article>
+            <article class="stat-card">
+              <h3>This cycle</h3>
+              <p class="quiet" id="cx-span">Dec 20, 2025 – Jan 16, 2026 · 29 days</p>
+              <p class="quiet">Period 3 days · Oura Ring 3</p>
+            </article>
+            <article class="stat-card" id="cx-fol">
+              <div class="stat-top"><h3>Follicular</h3><span class="unit">Days 1–14</span></div>
+              <div class="phase-metrics">
+                <div><b class="green">110</b><span>mg/dL</span></div>
+                <div><b class="green">82%</b><span>time in range</span></div>
+                <div><b class="blue">35 U</b><span>daily insulin</span></div>
+              </div>
+              <span class="delta down">↓ 4% time in range vs prior</span>
+            </article>
+            <article class="stat-card" id="cx-lut">
+              <div class="stat-top"><h3>Luteal</h3><span class="unit">Day 15 – menstruation</span></div>
+              <div class="phase-metrics">
+                <div><b class="green">140</b><span>mg/dL</span></div>
+                <div><b class="green">69%</b><span>time in range</span></div>
+                <div><b class="blue">42 U</b><span>daily insulin</span></div>
+              </div>
+              <span class="delta up">↑ 2% time in range vs prior</span>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><h3>Time in range</h3><span class="unit" id="cx-day-tag">This day</span></div>
+              <div id="cx-tir"></div>
+            </article>
+            <article class="stat-card stat-inline">
+              <h3 id="cx-avg-label">Avg. Glucose (CGM)</h3>
+              <div class="stat-value" id="cx-avg">146 <small>mg/dL</small></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><h3>Total insulin <span class="quiet" id="cx-insulin">(41.8 U)</span></h3></div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill basal" id="cx-basal-bar"></span><em id="cx-basal-chip">18.4U</em></div>
+                <span id="cx-basal">44%</span>
+              </div>
+              <div class="dose-row">
+                <div class="dose-track"><span class="fill bolus" id="cx-bolus-bar"></span><em id="cx-bolus-chip">23.4U</em></div>
+                <span id="cx-bolus">56%</span>
+              </div>
+              <div class="keyline"><span>Basal</span><span>Bolus</span></div>
+            </article>
+            <article class="stat-card stat-inline">
+              <h3>Total carbs</h3>
+              <div class="stat-value blue" id="cx-carbs">152 <small>g</small></div>
+            </article>
+            <article class="stat-card stat-inline">
+              <h3>Std. deviation</h3>
+              <div class="stat-value navy" id="cx-sd">36 <small>mg/dL</small></div>
+            </article>
+          </aside>
+        </div>
+      </div>
+
+      <div class="view" data-view="cycle" hidden>
+        <div id="cycle-stage">
+        <div class="insight-wrap">
+          <div class="insight-row" id="cycle-insight-cards"></div>
+          <p class="fine insight-note">These figures are recorded for the cycles in view. They are not a medication recommendation.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-row">
+            <h2>Insights Period</h2>
+            <div class="pills">
+              <button class="pill" type="button" data-period="1">Last Cycle</button>
+              <button class="pill" type="button" data-period="2">Last 2 Cycles</button>
+              <button class="pill" type="button" data-period="3" aria-pressed="true">Last 3 Cycles</button>
+              <div class="custom-pop">
+                <button class="pill" type="button" data-period="custom" aria-pressed="false">Custom
+                  <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                </button>
+                <form class="custom-panel" id="custom-panel" hidden>
+                  <label>Start <input id="custom-start" type="date" value="2025-10-21" /></label>
+                  <label>End <input id="custom-end" type="date" value="2026-01-16" /></label>
+                  <p class="error" id="custom-error" hidden>Choose a start date on or before the end date.</p>
+                  <button class="pill" id="custom-apply" type="button">Apply</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="cycle-block">
+            <h2>Cycle Details</h2>
+            <div class="cycle-list" id="cycle-list"></div>
+          </div>
+        </div>
+
+        <article class="card therapy-settings" id="cycle-therapy">
+          <div class="card-title">
+            <h2>Therapy settings</h2>
+            <span>Tandem t:slim X2 · same profile each cycle day</span>
+          </div>
+          <p class="impact-lead" id="cycle-therapy-lead"></p>
+          <div id="cycle-therapy-balance"></div>
+          <div class="settings-grid">
+            <section class="settings-table">
+              <h3>Basal rates <span>U/hr</span></h3>
+              <table>
+                <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                <tbody>
+                  <tr><td>12:00 am</td><td>1</td></tr>
+                  <tr><td>2:00 am</td><td>1.05</td></tr>
+                  <tr><td>4:00 am</td><td>1.1</td></tr>
+                  <tr><td>6:30 am</td><td>1.3</td></tr>
+                  <tr><td>9:30 am</td><td>1.1</td></tr>
+                  <tr><td>1:30 pm</td><td>1</td></tr>
+                </tbody>
+                <tfoot><tr><td>Total</td><td>25.65</td></tr></tfoot>
+              </table>
+            </section>
+            <section class="settings-table">
+              <h3>Correction range <span>mg/dL</span></h3>
+              <table>
+                <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                <tbody>
+                  <tr><td>12:00 am</td><td>105–115</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section class="settings-table">
+              <h3>Carb ratios <span>g/U</span></h3>
+              <table>
+                <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                <tbody>
+                  <tr><td>12:00 am</td><td>8.5</td></tr>
+                  <tr><td>5:00 am</td><td>7.5</td></tr>
+                  <tr><td>9:30 am</td><td>7.8</td></tr>
+                  <tr><td>11:00 am</td><td>8.5</td></tr>
+                  <tr><td>6:00 pm</td><td>8</td></tr>
+                </tbody>
+              </table>
+            </section>
+            <section class="settings-table">
+              <h3>Insulin sensitivities <span>mg/dL/U</span></h3>
+              <table>
+                <thead><tr><th>Start time</th><th>Value</th></tr></thead>
+                <tbody>
+                  <tr><td>12:00 am</td><td>35</td></tr>
+                  <tr><td>1:30 am</td><td>37</td></tr>
+                  <tr><td>9:30 pm</td><td>35</td></tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+          <dl class="settings-limits">
+            <div><dt>Glucose safety limit</dt><dd>80 mg/dL</dd></div>
+            <div><dt>Maximum basal rate</dt><dd>3 U/hr</dd></div>
+            <div><dt>Maximum bolus</dt><dd>10 U</dd></div>
+            <div><dt>Insulin model</dt><dd>Rapid-Acting – Adults</dd></div>
+          </dl>
+          <p class="fine">Recorded pump settings. The same clock was on for period days, the days after bleeding, and luteal days. This is not a recommendation to change a dose.</p>
+        </article>
+
+        <article class="card impact-card" id="period-impact">
+          <div class="card-title">
+            <h2>Period and glucose</h2>
+            <span id="impact-span">Last 3 cycles</span>
+          </div>
+          <p class="impact-lead" id="impact-lead"></p>
+          <div class="impact-layout">
+            <div id="impact-chart" class="impact-chart"></div>
+            <div class="impact-compare" id="impact-compare"></div>
+          </div>
+          <p class="fine" id="impact-note"></p>
+        </article>
+
+        <article class="card hormone-card">
+          <div class="card-title">
+            <h2>Glucose by cycle day</h2>
+            <span id="hormone-span">Recorded glucose</span>
+          </div>
+          <p class="impact-lead" id="hormone-lead">The green line is recorded glucose in mg/dL. Thin lines are each cycle, so one cycle cannot hide inside the average. Shaded bands are the period, the days after bleeding, and the luteal phase.</p>
+          <div class="hormone-legend" id="hormone-legend"></div>
+          <div id="hormone-chart"></div>
+          <div class="hormone-phases" id="hormone-phases" aria-label="Glucose by phase"></div>
+          <div class="hormone-details" id="hormone-details"></div>
+          <p class="fine" id="hormone-glucose"></p>
+        </article>
+
+        <div class="cards">
+          <article class="card">
+            <div class="card-head">
+              <div class="card-title"><h2>Follicular Phase</h2><span>Cycle Day 1–14</span></div>
+              <div class="banner blue">
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.2a4.6 4.6 0 0 0-2.6 8.4c.4.3.6.7.6 1.1v.5h4v-.5c0-.4.2-.8.6-1.1A4.6 4.6 0 0 0 10 3.2Z" fill="none" stroke="#445f87"/><path d="M8.2 15h3.6M8.6 16.6h2.8" stroke="#445f87" stroke-linecap="round"/></svg>
+                <p style="margin:0">Days 1–14, including menstrual bleeding and the fertile days at the end of this phase. These averages describe the recorded cycles. They are not a medication recommendation.</p>
+              </div>
+            </div>
+            <div class="metrics">
+              <div class="metric green">
+                <div class="label">Avg. Glucose</div>
+                <div class="value">110 <small>mg/dL</small></div>
+                <svg class="spark" width="146" height="12" viewBox="0 0 146 12" aria-hidden="true"><polyline points="0,8 24,7 48,6 72,7 96,5 120,6 142,4" fill="none" stroke="#76d3a6" stroke-width="1.6"/><circle cx="142" cy="4" r="3" fill="#159b41"/></svg>
+              </div>
+              <div class="rule"></div>
+              <div class="metric green">
+                <div class="label">Avg. TIR</div>
+                <div class="value">82 <small>%</small></div>
+                <span class="delta down">↓ 4%</span>
+              </div>
+              <div class="rule"></div>
+              <div class="metric blue">
+                <div class="label">Avg. Daily Insulin</div>
+                <div class="value">35 <small>U</small></div>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-head">
+              <div class="card-title"><h2>Luteal Phase</h2><span>Cycle Day 15 – menstruation</span></div>
+              <div class="banner purple">
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.2a4.6 4.6 0 0 0-2.6 8.4c.4.3.6.7.6 1.1v.5h4v-.5c0-.4.2-.8.6-1.1A4.6 4.6 0 0 0 10 3.2Z" fill="none" stroke="#445f87"/><path d="M8.2 15h3.6M8.6 16.6h2.8" stroke="#445f87" stroke-linecap="round"/></svg>
+                <p style="margin:0">Day 15 through the next period. In this sample, glucose and insulin run higher than in the follicular phase. These averages describe the recorded cycles. They are not a medication recommendation.</p>
+              </div>
+            </div>
+            <div class="metrics">
+              <div class="metric green">
+                <div class="label">Avg. Glucose</div>
+                <div class="value">140 <small>mg/dL</small></div>
+                <svg class="spark" width="146" height="12" viewBox="0 0 146 12" aria-hidden="true"><polyline points="0,7 24,6 48,8 72,5 96,6 120,4 142,5" fill="none" stroke="#c4b6e6" stroke-width="1.6"/><circle cx="142" cy="5" r="3" fill="#b7a6dc"/></svg>
+              </div>
+              <div class="rule"></div>
+              <div class="metric green">
+                <div class="label">Avg. TIR</div>
+                <div class="value">69 <small>%</small></div>
+                <span class="delta up">↑ 2%</span>
+              </div>
+              <div class="rule"></div>
+              <div class="metric blue">
+                <div class="label">Avg. Daily Insulin</div>
+                <div class="value">42 <small>U</small></div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <article class="chart-card">
+          <h2 id="chart-title">Last 3 Cycles</h2>
+          <div id="cycle-chart"></div>
+        </article>
+        </div>
+      </div>
+
+      <div class="view" data-view="cycle-insights-2" hidden></div>
+
+      <div class="view" data-view="basics" hidden><div class="empty"><h2 id="empty-title">Basics</h2><p>This prototype includes Daily and Cycle Insights.</p></div></div>
+      <div class="view" data-view="trends" hidden><div class="empty"><h2>Trends</h2><p>This prototype includes Daily and Cycle Insights.</p></div></div>
+      <div class="view" data-view="bg" hidden><div class="empty"><h2>BG Log</h2><p>This prototype includes Daily and Cycle Insights.</p></div></div>
+      <div class="view" data-view="devices" hidden><div class="empty"><h2>Devices</h2><p>This prototype includes Daily and Cycle Insights.</p></div></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>v1.72.1</span>
+    <nav aria-label="Footer">
+      <a href="#daily">Get Mobile App</a>
+      <a href="#daily">Get Support</a>
+      <a href="#daily">Privacy and Terms of Use</a>
+    </nav>
+    <span>Made possible by JDRF</span>
+  </footer>
+
+  <div class="help-panel" id="help-panel" hidden>
+    <h2>About this view</h2>
+    <p>Daily uses the Cycle Insights visual system: navy tabs, gray summary panels, and white metric cards. Numbers describe the sample day. They are not treatment advice.</p>
+  </div>
+  <button class="help" id="help" type="button" aria-expanded="false">? Help</button>
+
+  <script src="app.js?v=20261120resize"></script>
+</body>
+</html>
