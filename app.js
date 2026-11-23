@@ -227,6 +227,17 @@ const state = {
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
+function readChartWindowFromQuery() {
+  const params = new URLSearchParams(location.search);
+  const startRaw = params.get("chartStart");
+  const endRaw = params.get("chartEnd");
+  if (startRaw == null && endRaw == null) return;
+  const start = startRaw == null ? 0 : Number(startRaw);
+  const end = endRaw == null ? 24 : Number(endRaw);
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return;
+  state.chartWindow = clampChartWindow(start, end);
+}
+
 function readHash() {
   const requested = new URLSearchParams(location.search).get("view");
   const raw = location.hash.replace("#", "");
@@ -251,6 +262,7 @@ function readHash() {
   } else if (["basics", "trends", "bg", "devices"].includes(hash)) {
     state.tab = hash;
   }
+  readChartWindowFromQuery();
 }
 
 function writeHash() {
@@ -2089,6 +2101,60 @@ function clampChartWindow(start, end) {
   return { start: nextStart, end: nextEnd };
 }
 
+/** Sample Oura wearable summary + HR series so Daily works without a live ring. */
+function sampleWearable(date, run) {
+  const resting = date === 14 ? 62 : 56 + (date % 6);
+  const points = [];
+  for (let step = 0; step <= 96; step += 1) {
+    const hour = step / 4;
+    let bpm = resting + 8;
+    if (hour < 5.5 || hour >= 22) bpm = resting + (hour % 1) * 2;
+    else if (hour < 8) bpm = resting + 18 + Math.sin(hour * 1.4) * 6;
+    else if (hour < 12) bpm = resting + 28 + Math.sin(hour * 0.9) * 10;
+    else if (hour < 17) bpm = resting + 22 + Math.sin(hour * 1.1) * 8;
+    else bpm = resting + 16 + Math.sin(hour * 0.7) * 7;
+    if (run && hour >= run.start && hour <= run.end) {
+      const mid = (run.start + run.end) / 2;
+      const peak = run.hr || 150;
+      const t = 1 - Math.abs(hour - mid) / Math.max(0.25, (run.end - run.start) / 2);
+      bpm = resting + (peak - resting) * Math.max(0, t);
+    }
+    // Light deterministic wobble so the line is not a perfect sine.
+    bpm += ((date * 7 + step * 3) % 5) - 2;
+    points.push({ hour, bpm: Math.round(Math.max(48, Math.min(190, bpm))) });
+  }
+  // stageGraph / stressGraph expect seconds; formatDuration divides by 60 for display.
+  const stages = date === 14
+    ? { deep: 85 * 60, rem: 98 * 60, light: 245 * 60, awake: 28 * 60 }
+    : {
+      deep: (70 + date % 20) * 60,
+      rem: (80 + date % 25) * 60,
+      light: (220 + date % 40) * 60,
+      awake: (18 + date % 15) * 60,
+    };
+  const stress = date === 14
+    ? { high: 105 * 60, recovery: 48 * 60, summary: "Elevated after the morning run" }
+    : {
+      high: (40 + date % 50) * 60,
+      recovery: (25 + date % 30) * 60,
+      summary: "Typical daytime load",
+    };
+  return {
+    heartRate: points,
+    restingHeartRate: resting,
+    hrv: date === 14 ? 25 : 22 + (date % 8),
+    readiness: date === 14 ? 59 : 55 + (date % 20),
+    sleepScore: date === 14 ? 68 : 62 + (date % 18),
+    sleepWhen: date === 14 ? "11:03 pm – 5:40 am" : "11:10 pm – 7:05 am",
+    sleepStages: stages,
+    activity: {
+      steps: date === 14 ? 5632 : 4200 + date * 37,
+      active: (date === 14 ? 78 : 35 + date % 40) * 60,
+    },
+    ouraStress: stress,
+  };
+}
+
 function easeOutCurve(t) {
   const x1 = 0.2;
   const y1 = 0;
@@ -2416,6 +2482,11 @@ function makeCalendarDay(date) {
       { name: "Workout", start: 8.3, end: 9.5, when: "8:18–9:30 am", source: "Tidepool Loop" },
       { name: "Run", start: 18, end: 19, when: "6:00–7:00 pm", source: "Tidepool Loop" },
     ] : [],
+    ...sampleWearable(date, story ? story.run : (date === 14 ? {
+      start: 6 + 5 / 60,
+      end: 7,
+      hr: 154,
+    } : null)),
     low: false,
   };
 }
@@ -2518,41 +2589,41 @@ function ouraRecord(live) {
 }
 
 function applyOura(day) {
+  const live = state.ouraByDate[isoDate(day)];
+  // Keep the built-in sample wearable summary until a live Oura day is available.
+  if (!live) return day;
   if (state.ouraStatus.connected && state.devices.oura) {
-    const live = state.ouraByDate[isoDate(day)];
-    if (!live) {
-      return {
-        ...day,
-        sleep: [],
-        tags: [],
-        run: null,
-        scheduled: loopPresets(day),
-        sleepWhen: "",
-        heartRate: [],
-        ...ouraRecord(null),
-      };
-    }
     return {
       ...day,
-      sleep: live.sleep,
-      tags: live.tags,
-      run: loopVerifiedWorkout(live.workout),
+      sleep: live.sleep?.length ? live.sleep : day.sleep,
+      tags: live.tags?.length ? live.tags : day.tags,
+      run: loopVerifiedWorkout(live.workout) || day.run,
       scheduled: loopPresets(day),
-      sleepWhen: live.sleepWhen || "",
-      heartRate: live.heartRate || [],
-      ...ouraRecord(live),
+      sleepWhen: live.sleepWhen || day.sleepWhen || "",
+      heartRate: (live.heartRate && live.heartRate.length) ? live.heartRate : (day.heartRate || []),
+      sleepStages: live.sleepStages || day.sleepStages || null,
+      hrv: live.hrv ?? day.hrv ?? null,
+      readiness: live.readiness ?? day.readiness ?? null,
+      activity: live.activity || day.activity || null,
+      restingHeartRate: live.restingHeartRate ?? day.restingHeartRate ?? null,
+      sleepScore: live.sleepScore ?? day.sleepScore ?? null,
+      ouraStress: live.stress || day.ouraStress || null,
     };
   }
-  const live = state.ouraByDate[isoDate(day)];
-  if (!live) return day;
   return {
     ...day,
-    sleep: live.sleep,
-    tags: live.tags,
-    run: loopVerifiedWorkout(live.workout),
-    sleepWhen: live.sleepWhen || "",
-    heartRate: live.heartRate || [],
-    ...ouraRecord(live),
+    sleep: live.sleep?.length ? live.sleep : day.sleep,
+    tags: live.tags?.length ? live.tags : day.tags,
+    run: loopVerifiedWorkout(live.workout) || day.run,
+    sleepWhen: live.sleepWhen || day.sleepWhen || "",
+    heartRate: (live.heartRate && live.heartRate.length) ? live.heartRate : (day.heartRate || []),
+    sleepStages: live.sleepStages || day.sleepStages || null,
+    hrv: live.hrv ?? day.hrv ?? null,
+    readiness: live.readiness ?? day.readiness ?? null,
+    activity: live.activity || day.activity || null,
+    restingHeartRate: live.restingHeartRate ?? day.restingHeartRate ?? null,
+    sleepScore: live.sleepScore ?? day.sleepScore ?? null,
+    ouraStress: live.stress || day.ouraStress || null,
   };
 }
 
@@ -2758,8 +2829,8 @@ function renderSleepPop(day) {
   const list = document.querySelector("#sleep-pop dl");
   if (!list) return;
   if (!renderSleepPop.sample) renderSleepPop.sample = list.innerHTML;
-  const live = state.ouraByDate[isoDate(day)];
-  if (!live) {
+  const hasWearable = Boolean(day.restingHeartRate || day.ouraStress || day.hrv != null || day.readiness != null || day.sleepStages || day.activity);
+  if (!hasWearable) {
     list.innerHTML = renderSleepPop.sample;
     setRecordEntry($("#sleep-pop"), document.querySelector("#sleep-pop .record-tip-time")?.textContent || "");
     return;
@@ -2789,8 +2860,7 @@ function renderSleepPop(day) {
 function renderOuraVitals(day) {
   const card = $("#oura-vitals");
   if (!card) return;
-  const live = state.ouraByDate[isoDate(day)];
-  const show = Boolean(live && state.devices.oura && (day.restingHeartRate || day.ouraStress || day.hrv != null || day.readiness != null || day.sleepStages || day.activity));
+  const show = Boolean(state.devices.oura && (day.restingHeartRate || day.ouraStress || day.hrv != null || day.readiness != null || day.sleepStages || day.activity));
   card.hidden = !show;
   if (!show) return;
   const heart = $("#resting-hr");
