@@ -2349,7 +2349,12 @@ function makeCalendarDay(date) {
       { hour: 8 + 18 / 60, carbs: 0, units: 1.2, delivered: true },
       { hour: 9 + 40 / 60, carbs: 45, units: 0, delivered: true, meal: "Carb meal" },
       { hour: 12.5 + 22 / 60, carbs: 0, units: 1.4, delivered: true },
+      // Cluster of carb meals close together to show overlap as small dots.
+      { hour: 14 + 18 / 60, carbs: 18, units: 0, delivered: true, meal: "Carb meal" },
+      { hour: 14 + 26 / 60, carbs: 12, units: 0, delivered: true, meal: "Carb meal" },
       { hour: 14 + 30 / 60, carbs: 32, units: 0, delivered: true, meal: "Carb meal" },
+      { hour: 14 + 36 / 60, carbs: 8, units: 0, delivered: true, meal: "Carb meal" },
+      { hour: 14 + 42 / 60, carbs: 15, units: 0, delivered: true, meal: "Carb meal" },
       { hour: 18 + 16 / 60, carbs: 0, units: 0.8, delivered: true },
       { hour: 20 + 30 / 60, carbs: 22, units: 0, delivered: true, meal: "Carb meal" },
     );
@@ -3093,33 +3098,33 @@ function drawDailyChart(day, chartHost, options = {}) {
       .slice()
       .sort((a, b) => a.hour - b.hour)
       .forEach((b) => {
+        const mealOnly = b.meal && !b.units;
         const px = x(b.hour);
-        if (px - lastMarker < markerGap) return;
+        // Carb-meal dots may sit close together; skip collision hiding for them.
+        if (!mealOnly && px - lastMarker < markerGap) return;
         shownBoluses.push(b);
-        lastMarker = px;
+        if (!mealOnly) lastMarker = px;
       });
     bolus += shownBoluses.map((b) => {
       const mealOnly = b.meal && !b.units;
       const barTop = yB(b.units);
-      const circleR = compact ? 8 : 13;
+      const circleR = mealOnly ? (compact ? 3.5 : 4.5) : (compact ? 8 : 13);
       const circleY = compact ? bTop + 10 : (mealOnly ? bTop + 18 : barTop - circleR);
       const units = !mealOnly && b.units && windowSpan < 23.5 && (!compact || windowSpan <= 12)
         ? `<text class="tiny" x="${(x(b.hour) + (compact ? 12 : 20)).toFixed(1)}" y="${circleY + 4}" fill="#737476">${b.units} U</text>`
         : "";
-      const mealLabel = b.meal && b.carbs && !compact
-        ? `<text class="tiny" x="${(x(b.hour) + 18).toFixed(1)}" y="${circleY + 4}" fill="#737476">${b.meal}</text>`
-        : "";
       const bar = mealOnly || !b.units
         ? ""
         : `<rect x="${x(b.hour) - (compact ? 4 : 4.5)}" y="${barTop}" width="${compact ? 8 : 9}" height="${Math.max(4, bBot - barTop)}" rx="1" fill="${compact ? "#7eb0dd" : "#5B9FD4"}"/>`;
-      const circle = b.carbs
-        ? `<circle cx="${x(b.hour)}" cy="${circleY}" r="${circleR}" fill="${mealOnly ? "#FFE8CF" : (b.delivered ? "#fff" : "#f8e7b0")}" stroke="${b.delivered || mealOnly ? "#708FC2" : "#e0b84a"}"/><text class="tiny" x="${x(b.hour)}" y="${circleY + (compact ? 3 : 4)}" text-anchor="middle" fill="#737476">${b.carbs}</text>`
+      const circle = mealOnly
+        ? `<circle cx="${x(b.hour)}" cy="${circleY}" r="${circleR}" fill="#FFE8CF" stroke="#C9A27A" stroke-width="1"/>`
+        : b.carbs
+        ? `<circle cx="${x(b.hour)}" cy="${circleY}" r="${circleR}" fill="${b.delivered ? "#fff" : "#f8e7b0"}" stroke="${b.delivered ? "#708FC2" : "#e0b84a"}"/><text class="tiny" x="${x(b.hour)}" y="${circleY + (compact ? 3 : 4)}" text-anchor="middle" fill="#737476">${b.carbs}</text>`
         : "";
       return `
       ${bar}
       ${circle}
       ${units}
-      ${mealLabel}
     `;
     }).join("");
     if (!compact) {
@@ -3137,7 +3142,7 @@ function drawDailyChart(day, chartHost, options = {}) {
         </g>`;
         const carbHit = b.carbs ? `
         <g class="bolus-hit" data-kind="carbs" ${shared} tabindex="0" role="button" aria-label="${carbLabel}">
-          <circle cx="${x(b.hour)}" cy="${(mealOnly ? bTop + 18 : yB(b.units) - 13).toFixed(1)}" r="18" fill="transparent"/>
+          <circle cx="${x(b.hour)}" cy="${(mealOnly ? bTop + 18 : yB(b.units) - 13).toFixed(1)}" r="${mealOnly ? 10 : 18}" fill="transparent"/>
         </g>` : "";
         return `
         ${insulinHit}
@@ -4207,17 +4212,19 @@ function drawPhaseChart(day) {
   const bolus = day.boluses.map((b) => {
     const mealOnly = b.meal && !b.units;
     const barTop = yB(b.units);
-    const circleR = 13;
+    const circleR = mealOnly ? 4.5 : 13;
     const circleY = mealOnly ? bTop + 18 : barTop - circleR;
     const bar = mealOnly
       ? ""
       : `<rect x="${x(b.hour) - 4.5}" y="${barTop}" width="9" height="${Math.max(4, bBot - barTop)}" rx="1" fill="${b.delivered ? "#5B9FD4" : "#e0b84a"}"/>`;
     const units = mealOnly ? "" : `<text class="tiny" x="${x(b.hour) + 20}" y="${circleY + 4}" fill="#737476">${b.units} U</text>`;
-    const mealLabel = mealOnly ? `<text class="tiny" x="${x(b.hour) + 18}" y="${circleY + 4}" fill="#737476">${b.meal}</text>` : "";
     const note = mealOnly
       ? `${b.meal}, ${b.carbs} g. No bolus was recorded with this meal.`
       : `Bolus ${b.units} U with ${b.carbs} g carbohydrates.`;
-    return `${bar}<circle cx="${x(b.hour)}" cy="${circleY}" r="${circleR}" fill="${mealOnly ? "#FFE8CF" : (b.delivered ? "#fff" : "#f8e7b0")}" stroke="${b.delivered || mealOnly ? "#708FC2" : "#e0b84a"}" aria-label="${note} Recorded. Not a medication recommendation."/><text class="tiny" x="${x(b.hour)}" y="${circleY + 4}" text-anchor="middle" fill="#737476">${b.carbs}</text>${units}${mealLabel}`;
+    const circle = mealOnly
+      ? `<circle cx="${x(b.hour)}" cy="${circleY}" r="${circleR}" fill="#FFE8CF" stroke="#C9A27A" stroke-width="1" aria-label="${note} Recorded. Not a medication recommendation."/>`
+      : `<circle cx="${x(b.hour)}" cy="${circleY}" r="${circleR}" fill="${b.delivered ? "#fff" : "#f8e7b0"}" stroke="${b.delivered ? "#708FC2" : "#e0b84a"}" aria-label="${note} Recorded. Not a medication recommendation."/><text class="tiny" x="${x(b.hour)}" y="${circleY + 4}" text-anchor="middle" fill="#737476">${b.carbs}</text>`;
+    return `${bar}${circle}${units}`;
   }).join("");
   const basal = [0.6, 0.8, 0.5, 0.9, 1.2, 0.85, 0.7, 0.95];
   const aTop = 392;
