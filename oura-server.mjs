@@ -61,7 +61,7 @@ function startAuth(res) {
     sendHtml(res, 200, `<!doctype html><meta charset="utf-8"><title>Connect Oura</title>
       <body style="font-family:Figtree,sans-serif;max-width:640px;margin:48px auto;color:#271b46">
       <h1>Add your Oura app</h1>
-      <p>Oura no longer issues personal tokens. Create an application at <a href="https://cloud.ouraring.com/oauth/applications">cloud.ouraring.com</a>, then put the client id and secret in <code>prototypes/tidepool-daily/.env</code>.</p>
+      <p>Oura no longer issues personal tokens. Create an application at <a href="https://cloud.ouraring.com/oauth/applications">cloud.ouraring.com</a>, then put the client id and secret in a <code>.env</code> file next to <code>oura-server.mjs</code>.</p>
       <p>Register this redirect URI exactly:</p>
       <p><code>${REDIRECT}</code></p>
       <pre style="background:#f7f7f8;padding:12px">OURA_CLIENT_ID=your-client-id

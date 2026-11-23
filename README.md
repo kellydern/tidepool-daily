@@ -6,6 +6,60 @@ The sample person is Lupita Lionfish. Glucose and insulin on these screens are a
 
 The same screens are in Figma on the discovery board: [Daily, 7 day, and Cycle Insights](https://www.figma.com/design/ae4O74howmad6XvUu6zIVA?node-id=9835-1160).
 
+## Set it up
+
+You need [Node.js 18](https://nodejs.org/) or newer. There is nothing to install with npm.
+
+The repository is private, so GitHub access has to be granted before the clone works.
+
+```bash
+git clone https://github.com/kellydern/tidepool-daily.git
+cd tidepool-daily
+node oura-server.mjs
+```
+
+Open http://localhost:8787/
+
+The server prints `Prototype at http://127.0.0.1:8787/#daily` when it is ready. Leave that terminal running. Stop it with Control-C.
+
+Glucose, insulin, carbs, and the cycle charts are the built-in sample. They show up with no account and no `.env` file. Use the tabs along the top, or open a screen directly:
+
+| Screen | Address |
+| --- | --- |
+| Daily | http://localhost:8787/#daily |
+| Nov 12–17 | http://localhost:8787/#week |
+| Cycle Insights | http://localhost:8787/#cycle-3 |
+| Cycle Insights 2 | http://localhost:8787/#cycle-insights-2 |
+| Daily mobile | http://localhost:8787/#daily-mobile |
+| Daily with the cycle strip | http://localhost:8787/#daily-cycle |
+
+The same files also live in the Calypso app repo at `prototypes/tidepool-daily`. From that folder, the start command is the same: `node oura-server.mjs`.
+
+### Add an Oura ring
+
+This part is optional. Skip it if the sample wearable data is enough.
+
+1. Create an application at [cloud.ouraring.com/oauth/applications](https://cloud.ouraring.com/oauth/applications).
+2. Set the redirect URI to `http://localhost:8787/auth/oura/callback`. It has to match that address exactly.
+3. In the project folder, copy the example env file and add the application’s client id and secret:
+
+```bash
+cp .env.example .env
+```
+
+```
+OURA_CLIENT_ID=your-client-id
+OURA_CLIENT_SECRET=your-client-secret
+```
+
+4. Stop the server and start it again with `node oura-server.mjs`. It reads `.env` only at startup.
+5. Open http://localhost:8787/#daily and click **Connect Oura**. Approve the request. Oura asks for daily, heart rate, workout, tag, and personal access so the prototype can read sleep, activity, and tags.
+6. Come back to Daily. The side panel fills with the ring’s recorded days where the sample week asks for them.
+
+If the button says **Add Oura app**, the `.env` file is missing a value or the server was not restarted after it was saved.
+
+`.env` and `.oura-session.json` stay on this machine. Both are ignored by git.
+
 ## Daily
 
 Saturday, Nov 14 is the sample day. The heart-rate, glucose, carb, bolus, and basal lanes are tall enough to read the swings and still fit a desktop window. The plot runs the full width of the chart. The Time in Range card lines up with the 70–180 mg/dL band.
@@ -45,13 +99,3 @@ Drag either handle, or circle a span, to move from the phase summary to the dail
 The same Saturday, inside a phone frame. The chart is wider than the phone and scrolls sideways.
 
 ![Daily view inside a phone frame](screenshots/daily-mobile.png)
-
-## Run
-
-```bash
-node oura-server.mjs
-```
-
-Open http://127.0.0.1:8787/
-
-Oura data is optional. Copy `.env.example` to `.env` and add an Oura application client id and secret. `.env` stays on this machine.
