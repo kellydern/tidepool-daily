@@ -12,6 +12,8 @@ https://kellydern.github.io/tidepool-daily/
 
 The hosted page is the sample only. Connect Oura from a local run if you want a live ring.
 
+![Tour of Daily, the week, Cycle Insights, and Cycle Insights 2](gifs/tour.gif)
+
 ## Set it up locally
 
 You need [Node.js 18](https://nodejs.org/) or newer. There is nothing to install with npm.
@@ -69,6 +71,8 @@ Saturday, Nov 14 is the sample day. The heart-rate, glucose, carb, bolus, and ba
 
 This day stays outside that band more than the earlier sample: lows near 51 and 56 mg/dL, and highs that sit at the top of the glucose lane. The recorded insulin total stays 38.4 U. Carb meals stay on the chart. The side panel shows the Oura day when a ring is connected, and the therapy table lists the recorded t:slim X2 settings.
 
+![Hovering the daily chart and moving between nearby days](gifs/daily.gif)
+
 ![Saturday Nov 14 daily view, with a taller glucose lane, carb meals, and the Time in Range card beside the chart](screenshots/daily.png)
 
 ## Nov 12–17
@@ -94,5 +98,7 @@ The same three cycles, with carbohydrate intake drawn three ways under the exerc
 - **Vs average.** A line of daily grams against a dashed line for the average of the cycles on screen.
 
 Drag either handle, or circle a span, to move from the phase summary to the daily grams. Exercise names and setting text appear once the window is narrow enough.
+
+![Dragging a Cycle Insights 2 handle to zoom into daily carb detail, then resetting to the full cycle](gifs/cycle-insights-2-zoom.gif)
 
 ![Cycle Insights 2 with the carb shade, phase bars, and average line stacked under exercise](screenshots/cycle-insights-2.png)
