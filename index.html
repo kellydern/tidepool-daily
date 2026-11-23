@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20261123split" />
+  <link rel="stylesheet" href="styles.css?v=20261123nomobile" />
 </head>
 <body>
   <header class="topbar">
@@ -53,7 +53,6 @@
         <button class="tab" type="button" role="tab" data-tab="basics">Basics</button>
         <button class="tab" type="button" role="tab" data-tab="trends">Trends</button>
         <button class="tab" type="button" role="tab" data-tab="daily" aria-selected="true">Daily</button>
-        <button class="tab" type="button" role="tab" data-tab="daily-mobile">Daily mobile</button>
         <button class="tab" type="button" role="tab" data-tab="week">Nov 12–17</button>
         <button class="tab" type="button" role="tab" data-tab="cycle">Cycle Insights <span class="badge">NEW</span></button>
         <button class="tab" type="button" role="tab" data-tab="cycle-insights-2">Cycle Insights 2</button>
@@ -431,14 +430,6 @@
         </div>
       </div>
 
-      <div class="view" data-view="daily-mobile" hidden>
-        <p class="fine phone-caption">Daily at a phone width. Slide the chart sideways. This is the same recorded day as the desktop view.</p>
-        <div class="phone-frame">
-          <div class="phone-status" aria-hidden="true"><span>9:41</span><span>Daily</span></div>
-          <div class="phone-screen" id="phone-screen"></div>
-        </div>
-      </div>
-
       <div class="view" data-view="week" hidden>
         <div class="week-head">
           <h2>Nov 12–17</h2>
@@ -799,6 +790,6 @@
   </div>
   <button class="help" id="help" type="button" aria-expanded="false">? Help</button>
 
-  <script src="app.js?v=20261123split"></script>
+  <script src="app.js?v=20261123nomobile"></script>
 </body>
 </html>

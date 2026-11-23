@@ -34,7 +34,6 @@ Glucose, insulin, carbs, and the cycle charts are the built-in sample. They show
 | Nov 12–17 | http://localhost:8787/#week |
 | Cycle Insights | http://localhost:8787/#cycle-3 |
 | Cycle Insights 2 | http://localhost:8787/#cycle-insights-2 |
-| Daily mobile | http://localhost:8787/#daily-mobile |
 | Daily with the cycle strip | http://localhost:8787/#daily-cycle |
 
 The same files also live in the Calypso app repo at `prototypes/tidepool-daily`. From that folder, the start command is the same: `node oura-server.mjs`.
@@ -97,9 +96,3 @@ The same three cycles, with carbohydrate intake drawn three ways under the exerc
 Drag either handle, or circle a span, to move from the phase summary to the daily grams. Exercise names and setting text appear once the window is narrow enough.
 
 ![Cycle Insights 2 with the carb shade, phase bars, and average line stacked under exercise](screenshots/cycle-insights-2.png)
-
-## Daily mobile
-
-The same Saturday, inside a phone frame. The chart is wider than the phone and scrolls sideways.
-
-![Daily view inside a phone frame](screenshots/daily-mobile.png)

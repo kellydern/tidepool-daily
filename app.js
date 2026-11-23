@@ -244,8 +244,6 @@ function readHash() {
     state.tab = "cycle-insights-2";
   } else if (hash === "daily" || hash === "") {
     state.tab = "daily";
-  } else if (hash === "daily-mobile") {
-    state.tab = "daily-mobile";
   } else if (hash === "week") {
     state.tab = "week";
   } else if (hash === "daily-cycle") {
@@ -293,7 +291,7 @@ function renderChrome() {
   placeCycleStage();
   placeDailyStage();
   const clinic = state.tab === "daily" || state.tab === "week" || state.tab === "daily-cycle";
-  const withCycle = state.tab === "daily" || state.tab === "daily-mobile" || state.tab === "week" || state.tab === "cycle" || state.tab === "cycle-insights-2" || state.tab === "daily-cycle";
+  const withCycle = state.tab === "daily" || state.tab === "week" || state.tab === "cycle" || state.tab === "cycle-insights-2" || state.tab === "daily-cycle";
   $("#workspace").hidden = !clinic;
   $("#back").hidden = !clinic;
   $("#who-name").textContent = withCycle ? "Lupita Lionfish" : "Jonathan Jellyfish";
@@ -310,8 +308,6 @@ function renderChrome() {
   if (help) {
     help.textContent = state.tab === "cycle-insights-2"
       ? "Cycle Insights 2 keeps the same recorded cycles. Drag a handle to resize the days in view, or circle a region. A tighter window shows each day’s carbohydrates, exercise, and any recorded setting change. Figures describe the sample. They are not treatment advice."
-      : state.tab === "daily-mobile"
-      ? "Daily mobile is the same recorded day in a phone-width screen. Slide the chart sideways. Figures describe the sample day. They are not treatment advice."
       : state.tab === "daily-cycle"
       ? "Daily + cycle keeps the day chart and adds Lupita’s menstrual cycle: phase, period, and how this day compares with follicular and luteal averages. Figures describe the sample. They are not treatment advice."
       : "Daily uses the Cycle Insights visual system: navy tabs, gray summary panels, and white metric cards. Numbers describe the sample day. They are not treatment advice.";
@@ -1352,10 +1348,9 @@ function replaceCycleSvg() {
 function placeDailyStage() {
   const stage = $("#daily-stage");
   if (!stage) return;
-  const phone = state.tab === "daily-mobile";
-  const host = phone ? $("#phone-screen") : document.querySelector('[data-view="daily"]');
+  const host = document.querySelector('[data-view="daily"]');
   if (host && stage.parentElement !== host) host.appendChild(stage);
-  stage.classList.toggle("is-phone", phone);
+  stage.classList.remove("is-phone");
 }
 
 function placeCycleStage() {
