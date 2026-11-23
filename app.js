@@ -228,7 +228,9 @@ const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
 function readHash() {
-  const hash = location.hash.replace("#", "");
+  const requested = new URLSearchParams(location.search).get("view");
+  const raw = location.hash.replace("#", "");
+  const hash = requested || (raw.startsWith("figmacapture=") ? "" : raw.split("&")[0]);
   if (hash === "cycle") {
     state.tab = "cycle";
     state.period = "1";
@@ -898,9 +900,7 @@ function renderCycleInsights(list) {
   const complete = (list || []).filter((cycle) => cycle.length);
   const early = cycleWindow(complete, () => [1, 2, 3, 4]);
   const late = cycleWindow(complete, (cycle) => [cycle.length - 2, cycle.length - 1, cycle.length]);
-  const earlyMove = exerciseWindow(complete, () => [1, 2, 3, 4]);
-  const lateMove = exerciseWindow(complete, (cycle) => [cycle.length - 2, cycle.length - 1, cycle.length]);
-  if (!early || !late || !earlyMove || !lateMove) {
+  if (!early || !late) {
     host.innerHTML = `<article class="insight-card"><h2>Cycle insights</h2><p class="insight-banner">A comparison needs a complete cycle.</p></article>`;
     return;
   }
@@ -918,26 +918,15 @@ function renderCycleInsights(list) {
   const insulinLine = insulinGap === 0
     ? `${scope}, recorded insulin averaged ${early.insulin} U on cycle days 1–4 and in the last 3 days before the next period.`
     : `${scope}, recorded insulin in the last 3 days before the next period averaged ${Math.abs(insulinGap)} U ${insulinGap > 0 ? "more" : "less"} than on cycle days 1–4.`;
-  const moveGap = lateMove.minutes - earlyMove.minutes;
-  const moveLine = moveGap === 0
-    ? `${scope}, recorded Oura exercise averaged ${earlyMove.minutes} minutes a day on cycle days 1–4 and in the last 3 days before the next period.`
-    : `${scope}, recorded Oura exercise in the last 3 days before the next period averaged ${Math.abs(moveGap)} minutes a day ${moveGap > 0 ? "more" : "less"} than on cycle days 1–4.`;
   const pair = (left, right) => `<div class="insight-stats">${left}<div class="insight-rule"></div>${right}</div>`;
-  const labeledPair = (label, stats) => `<div class="insight-pair"><p class="insight-kicker">${label}</p>${stats}</div>`;
   host.innerHTML = `
     <article class="insight-card">
-      <h2>Glucose and insulin</h2>
-      <div class="insight-banner">${icon("bulb")}<p>${glucoseLine} ${insulinLine}</p></div>
-      <div class="insight-pairs">
-        ${labeledPair("Glucose", pair(
-          insightStat(early.glucose, "mg/dL", glucoseTone(early.glucose), "", "", rangeMark(early.glucose)),
-          insightStat(late.glucose, "mg/dL", glucoseTone(late.glucose), "", "", rangeMark(late.glucose)),
-        ))}
-        ${labeledPair("Insulin", pair(
-          insightStat(early.insulin, "U", "#0096D1", "", ""),
-          insightStat(late.insulin, "U", "#0096D1", "", ""),
-        ))}
-      </div>
+      <h2>Glucose</h2>
+      <div class="insight-banner">${icon("bulb")}<p>${glucoseLine}</p></div>
+      ${pair(
+        insightStat(early.glucose, "mg/dL", glucoseTone(early.glucose), "", "", rangeMark(early.glucose)),
+        insightStat(late.glucose, "mg/dL", glucoseTone(late.glucose), "", "", rangeMark(late.glucose)),
+      )}
     </article>
     <article class="insight-card">
       <h2>Average Time in Range (TIR)</h2>
@@ -948,11 +937,11 @@ function renderCycleInsights(list) {
       )}
     </article>
     <article class="insight-card">
-      <h2>Oura exercise</h2>
-      <div class="insight-banner">${icon("bulb")}<p>${moveLine} Recorded activity, not a recommendation to exercise.</p></div>
+      <h2>Insulin</h2>
+      <div class="insight-banner">${icon("bulb")}<p>${insulinLine} Recorded totals, not a recommendation to change a dose.</p></div>
       ${pair(
-        insightStat(earlyMove.minutes, "min", "#4A60E2", "", ""),
-        insightStat(lateMove.minutes, "min", "#4A60E2", "", ""),
+        insightStat(early.insulin, "U", "#0096D1", "", ""),
+        insightStat(late.insulin, "U", "#0096D1", "", ""),
       )}
     </article>
   `;

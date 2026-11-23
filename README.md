@@ -6,11 +6,15 @@ The sample person is Lupita Lionfish. Glucose and insulin on these screens are a
 
 The same screens are in Figma on the discovery board: [Daily, 7 day, and Cycle Insights](https://www.figma.com/design/ae4O74howmad6XvUu6zIVA?node-id=9835-1160).
 
-## Set it up
+## Live demo
+
+https://kellydern.github.io/tidepool-daily/
+
+The hosted page is the sample only. Connect Oura from a local run if you want a live ring.
+
+## Set it up locally
 
 You need [Node.js 18](https://nodejs.org/) or newer. There is nothing to install with npm.
-
-The repository is private, so GitHub access has to be granted before the clone works.
 
 ```bash
 git clone https://github.com/kellydern/tidepool-daily.git
@@ -78,7 +82,7 @@ One chart per day, newest first, with a shared pair of resize handles. Saturday 
 
 Last 3 Cycles is the default span. The plot has no grey fill and runs the full width of the container. Axis numbers sit on the left and right edges. Period days are outlines. A mark on Dec 20 records a method change from combined pill to hormonal IUD.
 
-Three cards compare cycle days 1–4 with the last 3 days before the next period: glucose and insulin, time in range, and Oura exercise. Carbs are one gold bar per day. Drag a handle inward to read a shorter span.
+Three cards compare cycle days 1–4 with the last 3 days before the next period: glucose, time in range, and insulin. Carbs are one gold bar per day. Drag a handle inward to read a shorter span.
 
 ![Three cycles from Oct 21 2025 to Jan 16 2026, with glucose range, daily insulin, exercise, carbs, and setting marks](screenshots/cycle.png)
 
